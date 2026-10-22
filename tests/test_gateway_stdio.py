@@ -182,3 +182,23 @@ def test_no_arguments_flag_keeps_payloads_out_of_the_log(make_session):
     assert "arguments" not in calls[0]
     assert "argument_bytes" not in calls[0]
     assert calls[0]["decision"] == "allow"
+
+
+def test_batch_requests_are_refused_not_forwarded(make_session):
+    session = make_session(ALLOW_AND_DENY)
+    session.initialize()
+    session.send(
+        [
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "tools/call",
+                "params": {"name": "rm_rf", "arguments": {"path": "/"}},
+            }
+        ]
+    )
+    reply = session.recv()
+    assert reply["error"]["code"] == -32600
+    assert "batch" in reply["error"]["message"].lower()
+    assert session.traced_calls() == []
+    assert session.events("protocol_error")

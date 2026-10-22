@@ -149,6 +149,26 @@ class Gateway:
             )
             self._forward(line + b"\n", proc)
             return
+        if isinstance(message, list):
+            # A batched tools/call would otherwise skip the policy check, so
+            # batches are refused instead of forwarded.
+            self.audit.emit(
+                "protocol_error",
+                server=self.name,
+                error="JSON-RPC batch requests are not supported",
+                batch_size=len(message),
+            )
+            self._write_client(
+                {
+                    "jsonrpc": "2.0",
+                    "id": None,
+                    "error": {
+                        "code": -32600,
+                        "message": "mcp-firewall: JSON-RPC batch requests are not supported",
+                    },
+                }
+            )
+            return
         if isinstance(message, dict) and message.get("method") == "tools/call":
             self._handle_tool_call(message, line, proc)
             return

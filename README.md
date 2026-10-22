@@ -170,6 +170,7 @@ The end to end tests start `tests/fake_server.py` as a real MCP server over stdi
 
 - One server per gateway process. Run one gateway per server.
 - Newline delimited JSON-RPC only, which is what the MCP stdio transport specifies. Content-Length framing is not implemented.
+- JSON-RPC batch requests are refused with `-32600` instead of forwarded, since a batched `tools/call` would skip the policy check.
 - `tools/list` is passed through, so a denied tool is still visible to the client. The call itself is blocked.
 - Rate limit state is in memory and per process.
 - No network listener, no persistent state, no authentication. It is a process boundary, not a sandbox.
