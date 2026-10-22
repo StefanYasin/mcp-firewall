@@ -1,0 +1,41 @@
+# Example policy for mcp-firewall.
+# Copy this next to your client config and edit the server block.
+version: 1
+
+# What happens when no allow or deny rule matches.
+default: deny
+
+# Merged into every server block. A server block overrides only the keys it
+# sets, so this is the baseline for all servers.
+defaults:
+  tools:
+    allow: ["read_*", "list_*", "search_*"]
+    deny: ["read_secrets", "read_env"]
+
+servers:
+  filesystem:
+    tools:
+      allow:
+        - read_file
+        - list_directory
+        - search_files
+      deny:
+        - write_file
+        - "delete_*"
+        - "move_*"
+    rate_limit:
+      calls: 30
+      per_seconds: 60
+
+  notes:
+    tools:
+      # "*" allows everything not listed in deny.
+      allow: "*"
+      deny: ["delete_*"]
+    # Shorthand for calls per 60 seconds.
+    rate_limit: 120
+
+audit:
+  path: ./audit.jsonl
+  # Set to false to keep tool arguments out of the log.
+  include_arguments: true

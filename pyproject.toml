@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcp-firewall"
+version = "0.1.0"
+description = "Policy gateway and JSONL audit log for MCP servers over stdio"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "Stefan Yasin" }]
+keywords = ["mcp", "model-context-protocol", "security", "audit", "proxy", "stdio"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Security",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+mcp-firewall = "mcp_firewall.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/StefanYasin/mcp-firewall"
+Source = "https://github.com/StefanYasin/mcp-firewall"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
