@@ -180,3 +180,11 @@ The end to end tests start `tests/fake_server.py` as a real MCP server over stdi
 MIT
 
 Built by [Stefan Yasin](https://stefanyasin.github.io/)
+
+
+## Operations
+
+- **Deny by policy, log everything:** every `tools/call` is checked against the YAML policy before it is forwarded. Denied calls return `-32001` and never reach the server. Rate limited calls return `-32002`.
+- **Audit log:** one JSONL line per tool call and per result, so what an agent did is reconstructable after the fact.
+- **Self-contained:** the policy parser is a small subset parser with no dependencies, so the gateway runs anywhere Python 3.10 runs.
+- **Tested:** policy checks and the audit path are covered by the suite, CI-gated.
